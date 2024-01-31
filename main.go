@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/Faanilo/go-node/utils"
+)
 
 func main() {
-	fmt.Println("Hello world")
+	utils.Execute()
 }
