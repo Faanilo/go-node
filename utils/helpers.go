@@ -176,3 +176,7 @@ func InstallTSC() {
 	}
 
 }
+
+func creatingEntryPoint() {
+
+}
