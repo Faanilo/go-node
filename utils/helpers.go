@@ -177,6 +177,40 @@ func InstallTSC() {
 
 }
 
-func creatingEntryPoint() {
+func createDirectoryTemp(dir string) {
+	// Create the directory if it doesn't exist
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			fmt.Println("Error creating directory:", err)
+			return
+		}
+	}
+}
 
+func moveFiles(cmd *cobra.Command, destinationDir string, sourceDir string) {
+	// Get all files and subdirectories in the source directory
+	files, err := os.ReadDir(sourceDir)
+	if err != nil {
+		fmt.Println("Error reading source directory:", err)
+		return
+	}
+
+	// Move each file to the destination directory
+	for _, file := range files {
+		sourcePath := fmt.Sprintf("%s/%s", sourceDir, file.Name())
+		destinationPath := fmt.Sprintf("%s/%s", destinationDir, file.Name())
+
+		// Move the file
+		err := os.Rename(sourcePath, destinationPath)
+		if err != nil {
+			fmt.Printf("Error moving file %s to %s: %v\n", sourcePath, destinationPath, err)
+		}
+	}
+
+	// Remove the empty source directory
+	err = os.Remove(sourceDir)
+	if err != nil {
+		fmt.Println("Error removing source directory:", err)
+	}
 }

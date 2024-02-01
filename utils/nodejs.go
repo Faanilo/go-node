@@ -13,14 +13,15 @@ var genNode = &cobra.Command{
 	Short: "Generate nodejs project",
 	Long: `Generate nodejs project
 	Example usage:
-	nixjs node-gen -D ./projects/myapp -l "lib1 lib2" -d "lib3 lib4"`,
+	gno node-gen -D ./projects/myapp -l "lib1 lib2" -d "lib3 lib4"`,
 	Run: generateNodeJS,
 }
+
 var template = &cobra.Command{
 	Use:   "template",
-	Short: "Generate CRUD node template",
-	Long:  `Generate CRUD node tempalte`,
-	Run:   generateGitHubRepo,
+	Short: "Generate CRUD node template and specify the folder name",
+	Long:  `Generate CRUD node template`,
+	Run:   generateTemplate,
 }
 
 func init() {
@@ -30,29 +31,32 @@ func init() {
 	genNode.Flags().BoolP("yes", "y", false, "Generate default NodeJs package.json file")
 	genNode.Flags().StringP("libs", "l", " ", "List of Node.js libraries to install")
 	genNode.Flags().StringP("dev-libs", "d", " ", "List of Node.js libraries to install")
+	// Modify the template command to accept an argument for the folder name
+	template.Flags().StringP("directory", "D", "./myApp", "Output directory for the project")
 }
 
 func generateNodeJS(cmd *cobra.Command, args []string) {
 	dir, _ := cmd.Flags().GetString("directory")
 	createDirectory(dir)
 	checkNPMInstallation()
-
 	changeDirectory(dir)
-
 	initNodeProject(cmd)
-
 	installLibraries(cmd, "libs")
 	installLibraries(cmd, "dev-libs")
 }
 
-func generateGitHubRepo(cmd *cobra.Command, args []string) {
-	// Assuming the GitHub repository is https://github.com/Faanilo/API-EXPRESS
+func generateTemplate(cmd *cobra.Command, args []string) {
+	if len(args) != 1 {
+		fmt.Println("Error: Please provide a folder name for the template.")
+		return
+	}
+
 	repoURL := "https://github.com/Faanilo/API-EXPRESS.git"
+	destDir := args[0] // Get the folder name from the command line arguments
 
-	//remove dir to allow
-	//dir, _ := cmd.Flags().GetString("directory")
-
-	fmt.Println("Generating tempalate ...")
+	// Create the destination directory if it doesn't exist
+	createDirectoryTemp(destDir)
+	fmt.Println("Generating template ...")
 
 	// Clone the repository
 	cmdClone := exec.Command("git", "clone", repoURL)
@@ -61,9 +65,12 @@ func generateGitHubRepo(cmd *cobra.Command, args []string) {
 	err := cmdClone.Run()
 
 	if err != nil {
-		fmt.Println("Error when generate template:", err)
+		fmt.Println("Error when generating template:", err)
 		return
 	}
 
-	fmt.Println("Template generated succesfully ")
+	// Move all files from the cloned repository to the destination directory
+	moveFiles(cmd, destDir, "API-EXPRESS")
+
+	fmt.Println("Template generated successfully ")
 }

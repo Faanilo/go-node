@@ -11,8 +11,8 @@ var rootCmd = &cobra.Command{
 	Use:   "gno",
 	Short: "Gno Code Generator",
 	Long: `Welcome to GNO: Your Node Project Generator!
-	NodeGen is a powerful and easy-to-use command line tool designed to kickstart your Node.js development. 
-	With just a few flags, you can generate a structured Node.js project, 
+	GNO is a powerful and easy-to-use command line tool designed to kickstart your Node.js development. 
+	With just a few flags, you can generate a structured Node project, 
 	saving you time and setting you up with best practices.`,
 }
 
